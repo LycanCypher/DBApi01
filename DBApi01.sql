@@ -134,3 +134,21 @@ CREATE TABLE IF NOT EXISTS  api01.Movimiento_has_Productos (
     ON DELETE RESTRICT
 	ON UPDATE CASCADE)
 ENGINE = InnoDB;
+
+/* Inserción de los datos*/
+INSERT INTO api01.Tipo_Producto(tipo) VALUES
+('comestible'), ('golosina y botana'), ('aseo y limpieza'),
+('higiene y cuidado'), ('bebida'), ('perecedero'), ('mascota');
+
+INSERT INTO api01.Presenta_Producto(presenta) VALUES
+('caja'), ('bolsa'), ('botella'), ('lata'), ('paquete'), ('bote'),
+('frasco'), ('tetrapack');
+
+INSERT INTO api01.Tipo_Mov(tipoMov) VALUES
+('ENTRADA'), ('SALIDA');
+
+SELECT * FROM Tipo_Producto;
+SELECT * FROM Presenta_Producto;
+SELECT * FROM Tipo_Mov;
+
+
