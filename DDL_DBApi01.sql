@@ -28,16 +28,50 @@ ENGINE = InnoDB;
 
 -- 3
 -- -----------------------------------------------------
+-- Table  api01.Tipo_Usuario
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS api01.Tipo_Usuario;
+CREATE TABLE IF NOT EXISTS  api01.Tipo_Usuario (
+	idTipoUser INT NOT NULL AUTO_INCREMENT,
+	tipoUser VARCHAR(60) NULL,
+	PRIMARY KEY (idTipoUser))
+ENGINE = InnoDB;
+
+-- 4
+-- -----------------------------------------------------
 -- Table  api01.Precio
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS api01.Precio;
 CREATE TABLE IF NOT EXISTS  api01.Precio (
 	idPrecio INT NOT NULL AUTO_INCREMENT,
-	precio DECIMAL(10,2) NULL,
+	precio DECIMAL(10,2) NOT NULL,
 	PRIMARY KEY (idPrecio))
 ENGINE = InnoDB;
 
--- 4
+ALTER TABLE Precio ADD UNIQUE (precio);
+
+-- 5
+-- -----------------------------------------------------
+-- Table  api01.Usuario 
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS api01.Usuario;
+CREATE TABLE IF NOT EXISTS  api01.Usuario (
+	idUsuario INT NOT NULL AUTO_INCREMENT,
+	userName VARCHAR(45) NULL,
+    pass VARCHAR(150) NULL,
+    tipoUser_fk INT NOT NULL,
+	PRIMARY KEY (idUsuario),
+    INDEX fk_Usuario_Tipo (tipoUser_fk ASC),
+	CONSTRAINT fk_Usuario_Tipo
+		FOREIGN KEY (tipoUser_fk)
+        REFERENCES api01.Tipo_Usuario (idTipoUser)
+        ON DELETE RESTRICT
+		ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+ALTER TABLE api01.Usuario AUTO_INCREMENT=1001;
+
+-- 6
 -- -----------------------------------------------------
 -- Table  api01.Producto 
 -- -----------------------------------------------------
@@ -47,7 +81,6 @@ CREATE TABLE IF NOT EXISTS  api01.Producto (
 	nombre VARCHAR(60) NULL,
     marca VARCHAR(60) NULL,
     cont INT NULL,
-    exist INT NOT NULL DEFAULT 0,
     idTipo_fk INT NOT NULL,
     idPresenta_fk INT NOT NULL,
 	PRIMARY KEY (idProducto),
@@ -65,9 +98,20 @@ CREATE TABLE IF NOT EXISTS  api01.Producto (
 		ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-ALTER TABLE api01.Producto AUTO_INCREMENT=1001;
+ALTER TABLE api01.Producto AUTO_INCREMENT=2001;
 
--- 5
+-- 7
+-- -----------------------------------------------------
+-- Table  api01.Concepto
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS api01.Concepto;
+CREATE TABLE IF NOT EXISTS  api01.Concepto (
+	idConcepto INT NOT NULL AUTO_INCREMENT,
+	concepto VARCHAR(60) NULL,
+	PRIMARY KEY (idConcepto))
+ENGINE = InnoDB;
+
+-- 8
 -- -----------------------------------------------------
 -- Table  api01.Producto_has_Precios
 -- -----------------------------------------------------
@@ -76,6 +120,8 @@ CREATE TABLE IF NOT EXISTS  api01.Producto_has_Precios (
 	idProducto_fk INT NOT NULL,
 	idPrecio_fk INT NOT NULL,
     fechPrecio DATE NOT NULL,
+    idConcepto_fk INT,
+    idUser_fk INT,
 	FOREIGN KEY (idProducto_fk)
     REFERENCES api01.producto (idProducto)
     ON DELETE RESTRICT
@@ -83,21 +129,18 @@ CREATE TABLE IF NOT EXISTS  api01.Producto_has_Precios (
     FOREIGN KEY (idPrecio_fk)
     REFERENCES api01.precio (idPrecio)
     ON DELETE RESTRICT
+	ON UPDATE CASCADE,
+    FOREIGN KEY (idConcepto_fk)
+	REFERENCES api01.Concepto (idConcepto)
+	ON DELETE RESTRICT
+	ON UPDATE CASCADE,
+	FOREIGN KEY (idUser_fk)
+	REFERENCES api01.Usuario (idUsuario)
+	ON DELETE RESTRICT
 	ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
--- 6
--- -----------------------------------------------------
--- Table  api01.Tipo_Mov
--- -----------------------------------------------------
-DROP TABLE IF EXISTS api01.Tipo_Mov;
-CREATE TABLE IF NOT EXISTS  api01.Tipo_Mov (
-	idTipoMov INT NOT NULL AUTO_INCREMENT,
-	tipoMov VARCHAR(60) NULL,
-	PRIMARY KEY (idTipoMov))
-ENGINE = InnoDB;
-
--- 7
+-- 9
 -- -----------------------------------------------------
 -- Table  api01.Movimiento
 -- -----------------------------------------------------
@@ -105,19 +148,19 @@ DROP TABLE IF EXISTS api01.Movimiento;
 CREATE TABLE IF NOT EXISTS api01.Movimiento (
 	idMov INT NOT NULL AUTO_INCREMENT,
     fechaMov DATE NOT NULL,
-    tipoMov_fk INT,
+    idConcepto_fk INT,
     PRIMARY KEY (idMov),
-    INDEX fk_Mov_Tipo_idx (tipoMov_fk ASC),
-    CONSTRAINT fk_Mov_Tipo
-		FOREIGN KEY (tipoMov_fk)
-        REFERENCES api01.Tipo_Mov (idTipoMov)
+    INDEX fk_Concepto_idx (idConcepto_fk ASC),
+    CONSTRAINT fk_Concepto
+		FOREIGN KEY (idConcepto_fk)
+        REFERENCES api01.Concepto (idConcepto)
         ON DELETE RESTRICT
 		ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-ALTER TABLE api01.Movimiento AUTO_INCREMENT=2001;
+ALTER TABLE api01.Movimiento AUTO_INCREMENT=3001;
     
--- 8
+-- 10
 -- -----------------------------------------------------
 -- Table  api01.Movimiento_has_Productos
 -- -----------------------------------------------------
@@ -125,6 +168,7 @@ DROP TABLE IF EXISTS api01.Movimiento_has_Productos;
 CREATE TABLE IF NOT EXISTS  api01.Movimiento_has_Productos (
 	idMov_fk INT NOT NULL,
     idProducto_fk INT NOT NULL,
+    cant INT NOT NULL,
     FOREIGN KEY (idMov_fk)
     REFERENCES api01.Movimiento (idMov)
     ON DELETE RESTRICT
@@ -135,20 +179,39 @@ CREATE TABLE IF NOT EXISTS  api01.Movimiento_has_Productos (
 	ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-/* Inserción de los datos*/
-INSERT INTO api01.Tipo_Producto(tipo) VALUES
-('comestible'), ('golosina y botana'), ('aseo y limpieza'),
-('higiene y cuidado'), ('bebida'), ('perecedero'), ('mascota');
+-- 11
+-- -----------------------------------------------------
+-- Table  api01.Usuario_has_Productos
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS api01.Usuario_has_Productos;
+CREATE TABLE IF NOT EXISTS  api01.Usuario_has_Productos (
+	idUsuario_fk INT NOT NULL,
+    idProducto_fk INT NOT NULL,
+    existencia INT NOT NULL,
+    FOREIGN KEY (idUsuario_fk)
+    REFERENCES api01.Usuario (idUsuario)
+    ON DELETE RESTRICT
+	ON UPDATE CASCADE,    
+	FOREIGN KEY (idProducto_fk)
+    REFERENCES api01.producto (idProducto)
+    ON DELETE RESTRICT
+	ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
-INSERT INTO api01.Presenta_Producto(presenta) VALUES
-('caja'), ('bolsa'), ('botella'), ('lata'), ('paquete'), ('bote'),
-('frasco'), ('tetrapack');
-
-INSERT INTO api01.Tipo_Mov(tipoMov) VALUES
-('ENTRADA'), ('SALIDA');
-
-SELECT * FROM Tipo_Producto;
-SELECT * FROM Presenta_Producto;
-SELECT * FROM Tipo_Mov;
-
-
+-- 12
+-- -----------------------------------------------------
+-- Table  api01.Usuario_has_Movimiento
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS api01.Usuario_has_Movimiento;
+CREATE TABLE IF NOT EXISTS  api01.Usuario_has_Movimiento (
+	idUsuario_fk INT NOT NULL,
+    idMov_fk INT NOT NULL,
+    FOREIGN KEY (idUsuario_fk)
+    REFERENCES api01.Usuario (idUsuario)
+    ON DELETE RESTRICT
+	ON UPDATE CASCADE,
+    FOREIGN KEY (idMov_fk)
+    REFERENCES api01.Movimiento (idMov)
+    ON DELETE RESTRICT
+	ON UPDATE CASCADE)
+ENGINE = InnoDB;
