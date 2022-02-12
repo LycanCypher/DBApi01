@@ -27,7 +27,7 @@ Si bien el nuevo esquema parece funcional y se adapta a lo requerido en primera 
 
 Así que se agrega e integra la tabla Usuario al modelo ya definido, teniendo en cuenta su relación con los productos y con los movimientos:
 
-![Alt text](imgs/DB-NV-2.jpg?raw=true "Modelo para la gestión de perfiles de usuario")
+![Alt text](imgs/DB-NV-2.png?raw=true "Modelo para la gestión de perfiles de usuario")
 
 El esquema anterior no contempla una relación usuario-precio teniendo en cuenta que:
 
@@ -36,6 +36,6 @@ El esquema anterior no contempla una relación usuario-precio teniendo en cuenta
 
 Es claro que esta relación existe y por tanto se debe ver reflejada en el esquema por lo que se agrega dicha relación en la tabla Producto_has_Precios:
 
-![Alt text](imgs/DB-NV-3.jpg?raw=true "Modelo para la gestión de perfiles de usuario")
+![Alt text](imgs/DB-NV-3.png?raw=true "Modelo para la gestión de perfiles de usuario")
 
 
