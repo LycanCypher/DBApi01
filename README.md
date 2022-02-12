@@ -24,3 +24,18 @@ Si bien el nuevo esquema parece funcional y se adapta a lo requerido en primera 
 * Un usuario "normal" no puede editar los detalles de un producto una vez registrado, sólo sus precios de compra/venta al momento de adquirirlo.
 * La existencia de un producto tendrá que ver con el usuario que halla accesado.
 * El usuario "admin" tendrá acceso completo al sistema, pudiendo; registrar, consultar, editar o eliminar productos y/o usuarios, consultar los movimientos generales del sistema, de un producto o usuario en particular, también tendrá acceso a todas las estadísticas generadas por el sistema; movimientos de capital, productos de mayor/menor demanda, etc.
+
+Así que se agrega e integra la tabla Usuario al modelo ya definido, teniendo en cuenta su relación con los productos y con los movimientos:
+
+![Alt text](imgs/DB-NV-2.jpg?raw=true "Modelo para la gestión de perfiles de usuario")
+
+El esquema anterior no contempla una relación usuario-precio teniendo en cuenta que:
+
+* Un usuario podrá definir el precio de compra/venta de un producto al momento de registrarlo
+* Un usuario podrá actualizar el precio de compra/venta de un producto al momento de agregarlo al carrito de compra
+
+Es claro que esta relación existe y por tanto se debe ver reflejada en el esquema por lo que se agrega dicha relación en la tabla Producto_has_Precios:
+
+![Alt text](imgs/DB-NV-3.jpg?raw=true "Modelo para la gestión de perfiles de usuario")
+
+
